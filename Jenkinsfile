@@ -22,10 +22,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh '''
-                scp target/java-demo-app-1.0.jar ec2-user@APP-SERVER-IP:/home/ec2-user/
-                ssh ec2-user@APP-SERVER-IP "nohup java -jar java-demo-app-1.0.jar > app.log 2>&1 &"
-                '''
+                sh 'nohup java -jar target/java-demo-app-1.0.jar > app.log 2>&1 &'
             }
         }
     }
