@@ -18,12 +18,11 @@ pipeline {
             steps {
                 sh '''
                 cd $WORKSPACE
-                BUILD_ID=dontKillMe
-                setsid java -jar target/java-demo-app-1.0.jar > app.log 2>&1 < /dev/null &
+                export BUILD_ID=dontKillMe
+                nohup java -jar target/java-demo-app-1.0.jar > app.log 2>&1 &
                 '''
             }
         }
-
 
     }
 }
