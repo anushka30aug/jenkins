@@ -17,12 +17,17 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                cd $WORKSPACE
+                set -x
+                echo "Workspace is $WORKSPACE"
+                ls -l $WORKSPACE/target
                 export BUILD_ID=dontKillMe
-                nohup java -jar target/java-demo-app-1.0.jar > app.log 2>&1 &
+                nohup java -jar $WORKSPACE/target/java-demo-app-1.0.jar > $WORKSPACE/app.log 2>&1 &
+                sleep 5
+                ps -ef | grep java
                 '''
             }
         }
+
 
     }
 }
