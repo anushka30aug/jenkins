@@ -19,17 +19,18 @@ pipeline {
                 sh '''
                     echo "=== Starting deployment ==="
 
-                    # Try to kill old running java app 
+                    # Kill old app
                     pkill -f "java.*java-demo-app" || echo "No old app was running"
 
-                    # Small wait so port becomes free
                     sleep 3
 
-                    # Start the new jar
-                    java -jar /var/lib/jenkins/workspace/java-demo-pipeline/target/java-demo-app-1.0.jar >> app.log 2>&1
-                    echo "=== App should be running now ==="
-                    echo "Check log with:   cat $WORKSPACE/app.log"
-                    echo "Check process with:   ps aux | grep java"
+                    # Prevent Jenkins from killing process
+                    export BUILD_ID=dontKillMe
+
+                    nohup java -jar /var/lib/jenkins/workspace/java-demo-pipeline/target/java-demo-app-1.0.jar >> app.log 2>&1 &
+
+                    echo "=== App started in background ==="
+                    echo "PID: $!"
                 '''
             }
         }
