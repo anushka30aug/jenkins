@@ -17,20 +17,20 @@ pipeline {
         stage('Stop old + Start new') {
             steps {
                 sh '''
-                    echo "=== Starting deployment ==="
+                    // echo "=== Starting deployment ==="
 
-                    # Try to kill old running java app 
-                    pkill -f "java.*java-demo-app" || echo "No old app was running"
+                    // # Try to kill old running java app 
+                    // pkill -f "java.*java-demo-app" || echo "No old app was running"
 
-                    # Small wait so port becomes free
-                    sleep 3
+                    // # Small wait so port becomes free
+                    // sleep 3
 
-                    # Start the new jar
-                    nohup java -jar target/java-demo-app-1.0.jar >> app.log 2>&1 &
+                    // # Start the new jar
+                    nohup java -jar /var/lib/jenkins/workspace/java-demo-pipeline/target/java-demo-app-1.0.jar >> app.log 2>&1 &
 
-                    echo "=== App should be running now ==="
-                    echo "Check log with:   cat $WORKSPACE/app.log"
-                    echo "Check process with:   ps aux | grep java"
+                    // echo "=== App should be running now ==="
+                    // echo "Check log with:   cat $WORKSPACE/app.log"
+                    // echo "Check process with:   ps aux | grep java"
                 '''
             }
         }
