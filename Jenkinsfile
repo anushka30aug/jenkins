@@ -107,7 +107,7 @@ pipeline {
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
                         echo "Pushing image to Docker Hub..."
-                        docker push yourdockerhub/java-demo-app:latest
+                        docker push anushkashukla003/java-demo-app:latest
 
                         docker logout
                     '''
