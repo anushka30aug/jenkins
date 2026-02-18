@@ -65,25 +65,77 @@ pipeline {
         //     }
         // }
 
+// THIS IS TO DEPLOY APPLICATION IN DOCKER CONTAINER AND DEPLOY THE CONTAINER ON THE SAME SERVER AS THAT OF JENKINS
+        // stage('Build Image') {
+        //     steps {
+        //         sh '''
+        //             docker build -t java-demo-app:latest .
+        //         '''
+        //     }
+        // }
+
+        // stage('Deploy Container') {
+        //     steps {
+        //         sh '''
+        //             echo "Stopping old container if exists..."
+        //             docker rm -f java-demo-app || true
+
+        //             echo "Starting new container..."
+        //             docker run -d --name java-demo-app -p 8085:8085 java-demo-app:latest
+        //         '''
+        //     }
+        // }
+
 
         stage('Build Image') {
             steps {
                 sh '''
-                    docker build -t java-demo-app:latest .
+                    echo "Building Docker image..."
+                    docker build -t anushkashukla003/java-demo-app:latest .
                 '''
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+                        echo "Pushing image to Docker Hub..."
+                        docker push yourdockerhub/java-demo-app:latest
+
+                        docker logout
+                    '''
+                }
             }
         }
 
         stage('Deploy Container') {
             steps {
                 sh '''
-                    echo "Stopping old container if exists..."
-                    docker rm -f java-demo-app || true
+                    echo "Deploying on remote server..."
 
-                    echo "Starting new container..."
-                    docker run -d --name java-demo-app -p 8085:8085 java-demo-app:latest
+                    ssh -o StrictHostKeyChecking=no ssm-user@172.31.19.228 '
+                        docker rm -f java-demo-app || true
+
+                        docker pull anushkashukla003/java-demo-app:latest
+
+                        docker run -d \
+                        --name java-demo-app \
+                        -p 9090:8085 \
+                        anushkashukla003/java-demo-app:latest
+                    '
                 '''
             }
         }
+
+
+
+
     }
 }
